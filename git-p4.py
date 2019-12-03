@@ -3867,7 +3867,9 @@ class P4Sync(Command, P4UserMap):
 
         branch_arg_given = bool(self.branch)
         if len(self.branch) == 0:
-            self.branch = self.refPrefix + "master"
+            branch = read_pipe_text("git rev-parse --abbrev-ref HEAD")
+            if len(branch) == 0 : branch = "master"
+            self.branch = self.refPrefix + branch
             if gitBranchExists("refs/heads/p4") and self.importIntoRemotes:
                 system("git update-ref %s refs/heads/p4" % self.branch)
                 system("git branch -D p4")
